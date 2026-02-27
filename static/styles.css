@@ -1,0 +1,74 @@
+:root {
+    --color-accent: rgba(218, 177, 218, 0.5);
+    font-family: sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 1em;
+
+    background-color: var(--color-accent);
+    backdrop-filter: blur(5px);
+
+    top: 0;
+    position: sticky;
+
+    & * {
+        color: black;
+        font-size: 1em;
+        cursor: pointer;
+    }
+
+    & a {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: center;  
+        
+        border: 0;
+
+        text-decoration: none;
+        background-color: yellow;
+    }
+
+    & #search-box {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        justify-content: flex-start;
+
+        align-self: center;
+        cursor: default;
+
+        margin-right: auto;
+
+        height: 100%;
+        flex: auto;
+
+        & input { 
+            cursor: text;
+            height: 1.8em;
+            width: 25%;
+        }
+        & button {
+            width: auto;
+            height: auto;
+        }
+    }
+
+    & img {
+        display: block;
+
+        flex: auto;
+        width: 5em;
+        height: auto;
+        margin: 0;
+    }
+}

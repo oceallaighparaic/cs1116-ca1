@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block header %}
+{% endblock %}
+
+{% block main_content %}
+    <form action="" method="POST" novalidate>
+        {{ form.hidden_tag() }}
+
+        {{ form.username.label }}
+        {{ form.username() }}
+        {% for error in form.username.errors %}
+            {{ error }}
+        {% endfor %}
+        <br />
+
+        {{ form.password.label }}
+        {{ form.password() }}
+        {% for error in form.password.errors %}
+            {{ error }}
+        {% endfor %}
+        <br />
+
+        {% if form.password2 %}
+            {{ form.password2.label }}
+            {{ form.password2() }}
+            {% for error in form.password2.errors %}
+                {{ error }}
+            {% endfor %}
+            <br />
+        {% endif %}
+
+        {{ form.submit() }}
+        {% for error in form.submit.errors %}
+            {{ error }}
+        {% endfor %}
+    </form>
+    <p>
+        {{ message }}
+    </p>
+{% endblock %}
