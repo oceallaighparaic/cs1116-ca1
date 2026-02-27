@@ -15,5 +15,5 @@ FROM users
 
 UPDATE users
 SET permission = "ADMIN"
-WHERE username = "EurosAndCents"
+WHERE username = "admin"
 ;
