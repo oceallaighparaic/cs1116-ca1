@@ -18,7 +18,13 @@ def validate_session() -> None:
     if not "user_id" in session:
         session["user_id"] = None
 
-@app.route("/")
+@app.before_request
+def navbar_search() -> None:
+    if request.method == "POST":
+        if request.form.get("search", None):
+            return redirect(url_for('store', item=request.form.get("search")))
+
+@app.route("/", methods=["GET","POST"])
 def home() -> str:
     return render_template("home.html", session=session)
 
@@ -91,6 +97,6 @@ def logout() -> str:
         session.clear()
     return redirect(url_for('home'))
 
-@app.route ("/store/<item>", methods=["GET"])
+@app.route ("/store/<item>", methods=["GET","POST"])
 def store(item: str) -> str:
-    return f"{item.title()}"
+    return f"{item}"
