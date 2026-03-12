@@ -34,3 +34,8 @@ v1.0.2:
     - Added @admin_only to helpers.py
     - Added error.html
     - Added an error handler
+
+v2.0.0:
+    - Added searchbar to base.html (using html form instead of wtforms because i think wtform would be overkill)
+    - Added "/search/" route
+    - Added search.html

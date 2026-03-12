@@ -113,3 +113,20 @@ def register_page() -> str:
         form=form
     )
 #endregion
+
+#region STORE
+@app.route("/store", methods=["GET","POST"], strict_slashes=False)
+def search_page() -> str:
+    search_term: Final[str] = request.args.get("search",None)
+    if not search_term: return redirect(url_for('home_page'))
+
+    db = database.get_db()
+    query = db.execute("SELECT * FROM products WHERE name LIKE ?", (f"%{search_term}%",)).fetchall()
+
+    return render_template(
+        "store/search.html",
+        title=f"Search for {search_term}",
+        search=search_term,
+        products=query
+    )
+#endregion

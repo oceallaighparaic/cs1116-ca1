@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block header %}
+{% endblock %}
+
+{% block main_content %}
+<section id="productlist">
+    {% for p in products %}
+        <article>
+            <h1>{{ p.name }}</h1>
+            <p>{{ p.price }}</p>
+            <img src="{{ url_for('static', filename='images/products/'~p.image~'.png') }}" alt="An image showing {{ p.name }}." />
+        </article>
+    {% endfor %}
+</section>
+{% endblock %}
