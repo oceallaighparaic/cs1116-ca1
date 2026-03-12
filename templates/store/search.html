@@ -8,8 +8,8 @@
     {% for p in products %}
         <article>
             <h1>{{ p.name }}</h1>
-            <p>{{ p.price }}</p>
-            <img src="{{ url_for('static', filename='images/products/'~p.image~'.png') }}" alt="An image showing {{ p.name }}." />
+            <p>&#8364;{{ p.price_cents/100 }}</p>
+            <img src="{{ url_for('static', filename='images/products/'~p.image) }}" alt="An image showing {{ p.name }}." />
         </article>
     {% endfor %}
 </section>

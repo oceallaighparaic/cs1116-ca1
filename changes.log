@@ -39,3 +39,8 @@ v2.0.0:
     - Added searchbar to base.html (using html form instead of wtforms because i think wtform would be overkill)
     - Added "/search/" route
     - Added search.html
+
+v2.1.0:
+    - Added admin-only "/add-products/" route
+    - Added AddProductsForm to forms.py 
+    - Updated DB so that prices are stored in cents

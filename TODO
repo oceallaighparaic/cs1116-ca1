@@ -1,6 +1,4 @@
-- Add product page (ADMIN ONLY)
-- Product images
-- Searchbar
+- Product pages
 - Cart
 - Orders
 - Reviews, only on ordered products
@@ -13,3 +11,6 @@
 DONE:
 - Login/logout
 - User permissions
+- Add product page (ADMIN ONLY)
+- Product images
+- Searchbar

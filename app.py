@@ -1,22 +1,34 @@
+#region IMPORTS
+# general flask
 from flask import Flask, render_template
 
+# sessions
 from flask_session import Session
 from flask import session, g
 
+# authentication
 from flask import redirect, url_for, request, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 
+# file uploads (https://flask-wtf.readthedocs.io/en/1.2.x/form/?highlight=filefield)
+import os
+from werkzeug.utils import secure_filename
+
+# homegrown organic grassfed modules
 import database.database as database
 import helpers
 import forms
 
+# my pedantic typehinting
 from typing import Final
+#endregion
 
 #region CONFIG
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "secret_key"
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
+app.config["UPLOAD_FOLDER"] = "static/images/products/"
 app.teardown_appcontext(database.close_db)
 Session(app)
 #endregion
@@ -43,7 +55,7 @@ def load_auth() -> None:
 # https://flask.palletsprojects.com/en/stable/errorhandling/
 @app.errorhandler(403)
 def forbidden(error):
-    return render_template("error.html", error=error), 403
+    return render_template("generic/error.html", error=error), 403
 
 @app.route("/login", methods=["GET","POST"], strict_slashes=False)
 @helpers.logout_required
@@ -125,8 +137,44 @@ def search_page() -> str:
 
     return render_template(
         "store/search.html",
-        title=f"Search for {search_term}",
+        title=f"Search For {search_term}",
         search=search_term,
         products=query
+    )
+
+@app.route("/add-product", methods=["GET","POST"], strict_slashes=False)
+@helpers.admin_only
+def add_product_page() -> str:
+    form = forms.AddProductForm()
+    message = ""
+
+    if form.validate_on_submit():
+        db = database.get_db()
+
+        name: Final[str] = form.name.data
+        price: Final[float] = form.price.data
+        image = form.image.data
+        description: Final[str] = form.description.data
+        
+        # !-- errors
+        if db.execute("SELECT id FROM products WHERE LOWER(name) = ?", (name.lower(),)).fetchone():
+            form.name.errors += ["Name already taken."]
+
+        # !-- add product
+        if not form.name.errors:
+            # https://flask-wtf.readthedocs.io/en/1.2.x/form/?highlight=filefield
+            filename: Final[str] = secure_filename(image.filename)
+            image.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+
+            db.execute("INSERT INTO products(name, price_cents, image, description) VALUES (?,?,?,?)", (name,int(price*100),filename,description))
+            db.commit()
+            
+            message = f"{name} added successfully."
+
+    return render_template(
+        "store/addproduct.html",
+        title="Add Products",
+        form=form,
+        message=message
     )
 #endregion
