@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_session import Session
 from flask import session, g
 
-import database
+import database.database as database
 
 #region CONFIG
 app = Flask(__name__)

@@ -12,3 +12,8 @@ v0.1.0:
     - Added DBML schema for future SQLite (probably next commit)
     - Added a TODO for myself...
     - In app.py, created the most basic home route!!
+
+v0.2.0:
+    - Moved database.py to database dir
+    - Added app.db, tasks.sql 
+    - Updated .gitignore to hide app.db
