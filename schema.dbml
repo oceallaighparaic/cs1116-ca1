@@ -1,0 +1,42 @@
+// https://dbml.dbdiagram.io/docs
+
+Project app {
+  database_type: 'SQLite'
+  note: 'CA1 for CS1116 Web Development, made by Paraic Kelly'
+}
+
+Table users {
+  id integer [pk, increment]
+  username varchar [not null, unique]
+  password varchar [not null]
+  permission integer [not null, default: 1]
+}
+
+Table permissions {
+    id integer [pk, increment]
+    name varchar [not null, unique]
+}
+
+ref: users.permission < permissions.id
+
+Table products {
+  id integer [pk, increment]
+  name varchar [not null, unique]
+  price decimal [not null]
+  image varchar [default: null]
+  description varchar
+}
+
+Table orders {
+  id integer [pk, increment]
+  userid integer [not null]
+  productid integer [not null]
+  quantity integer [not null, default: 1]
+  price_at_purchase decimal [not null]
+  created_at datetime [not null, default: 'CURRENT_DATE']
+  address varchar [not null]
+  description varchar
+}
+
+ref: orders.userid > users.id [delete: cascade]
+ref: orders.productid > products.id [delete: cascade]

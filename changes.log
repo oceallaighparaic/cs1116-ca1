@@ -1,0 +1,14 @@
+v0.1.0:
+    - Added changes.log so I can track what I'm changing before committing!
+    
+    - Added .gitignore
+    - Added .flaskenv
+    - Added flask, flask-wtf, flask-session dependencies (ofc)
+    - Added base.html template
+    - Added home.html template
+    - Added styles.css, but won't be worked on until the future
+    - Added app.py
+    - Updated README.md with dependencies
+    - Added DBML schema for future SQLite (probably next commit)
+    - Added a TODO for myself...
+    - In app.py, created the most basic home route!!
