@@ -1,5 +1,3 @@
-- Login/logout
-- User permissions
 - Add product page (ADMIN ONLY)
 - Product images
 - Searchbar
@@ -8,3 +6,10 @@
 - Reviews, only on ordered products
 - Ratings
 - Styling!!!
+- error page
+- pw requirements (in the end, not necessary)
+- 404 error handler!!
+
+DONE:
+- Login/logout
+- User permissions

@@ -17,3 +17,20 @@ v0.2.0:
     - Moved database.py to database dir
     - Added app.db, tasks.sql 
     - Updated .gitignore to hide app.db
+
+v1.0.0:
+    - Added helpers.py with decorators @login_required and @logout_required
+    - Added routes "/logout/" and "/login/"
+    - Added login.html template
+    - Added forms.py with LoginForm
+    - Created macros.html, with field_errors() and create_field() macro for creating the errors in a form (im just lazy lol)
+
+v1.0.1:
+    - Added register.html
+    - Added RegisterForm to forms.py
+    - Added route "/register/"
+
+v1.0.2:
+    - Added @admin_only to helpers.py
+    - Added error.html
+    - Added an error handler

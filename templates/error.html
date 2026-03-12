@@ -4,7 +4,10 @@
 {% endblock %}
 
 {% block main_content %}
-    <p>
-        Home.
-    </p>
+<h1>
+    {{ error.code }}: {{ error.name }}
+</h1>
+<p>
+    {{ error.description }}
+</p>
 {% endblock %}
