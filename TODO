@@ -1,4 +1,3 @@
-- Product pages
 - Cart
 - Orders
 - Reviews, only on ordered products
@@ -14,3 +13,4 @@ DONE:
 - Add product page (ADMIN ONLY)
 - Product images
 - Searchbar
+- Product pages

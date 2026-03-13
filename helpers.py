@@ -5,7 +5,7 @@ import database.database as database
 def login_required(v):
     @functools.wraps(v)
     def wrapped_v(*args, **kwargs):
-        if g.user is None:
+        if g.user is None or g.user_id is None:
             return redirect(url_for('login_page', next=request.url))
         return v(*args, **kwargs)
     return wrapped_v
@@ -20,6 +20,7 @@ def logout_required(v):
 
 def admin_only(v):
     @functools.wraps(v)
+    @login_required
     def wrapped_v(*args, **kwargs):
         db = database.get_db()
         user_perm: str = db.execute("""

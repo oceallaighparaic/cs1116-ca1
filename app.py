@@ -13,6 +13,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # file uploads (https://flask-wtf.readthedocs.io/en/1.2.x/form/?highlight=filefield)
 import os
 from werkzeug.utils import secure_filename
+import uuid
 
 # homegrown organic grassfed modules
 import database.database as database
@@ -83,7 +84,7 @@ def login_page() -> str:
             session["user_id"] = query["id"]
             session["username"] = query["username"]
 
-            return redirect(url_for(request.args.get("next","home_page")))
+            return redirect(request.args.get("next") or url_for("home_page"))
 
     return render_template(
         "auth/login.html",
@@ -163,7 +164,7 @@ def add_product_page() -> str:
         # !-- add product
         if not form.name.errors:
             # https://flask-wtf.readthedocs.io/en/1.2.x/form/?highlight=filefield
-            filename: Final[str] = secure_filename(image.filename)
+            filename: Final[str] = secure_filename(f"{uuid.uuid4()}.{image.filename.split('.')[-1]}")
             image.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
 
             db.execute("INSERT INTO products(name, price_cents, image, description) VALUES (?,?,?,?)", (name,int(price*100),filename,description))
@@ -176,5 +177,25 @@ def add_product_page() -> str:
         title="Add Products",
         form=form,
         message=message
+    )
+
+@app.errorhandler(404)
+def not_found(error):
+    return render_template("generic/error.html", error=error), 404
+
+@app.route("/product/<int:id>", methods=["GET","POST"], strict_slashes=False)
+def product_page(id: int) -> str:
+    db = database.get_db()
+    product = db.execute("SELECT * FROM products WHERE id = ? ;", (id,)).fetchone()
+
+    # !-- errors
+    if not product:
+        abort(404)
+
+    # !-- product page
+    return render_template(
+        "store/product.html",
+        title=product["name"],
+        product=product
     )
 #endregion

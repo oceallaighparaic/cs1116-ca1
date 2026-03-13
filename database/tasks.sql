@@ -1,3 +1,5 @@
+-- NOTE: Clear product images after running this schema
+
 PRAGMA foreign_keys = ON
 ;
 

@@ -44,3 +44,8 @@ v2.1.0:
     - Added admin-only "/add-products/" route
     - Added AddProductsForm to forms.py 
     - Updated DB so that prices are stored in cents
+
+v2.2.0:
+    - Added product pages under the "/product/<id>" route
+    - Fixed bug with authentication helpers.admin_only, now requires login (it didn't before???)
+    - Changed filenames to uuids
