@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block header %}
+{% endblock %}
+
+{% block main_content %}
+    {% if cart %}
+        <table>
+            {% for p_id, quantity in cart.items() %}
+                <tr>
+                    <td><a href="{{ url_for('product_page', p_id=p_id) }}">{{ names[p_id] }}</a></td>
+                    <td>{{ quantity }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>
+            Your cart is empty!
+        </p>
+    {% endif %}
+{% endblock %}

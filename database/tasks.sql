@@ -1,3 +1,5 @@
+-- NOTE: Clear product images after running this schema
+
 PRAGMA foreign_keys = ON
 ;
 
@@ -41,7 +43,7 @@ VALUES (
 CREATE TABLE products(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR NOT NULL UNIQUE,
-    price DECIMAL NOT NULL,
+    price_cents INTEGER NOT NULL, -- stored in cents
     image VARCHAR DEFAULT NULL,
     description VARCHAR
 )
@@ -52,11 +54,11 @@ CREATE TABLE orders(
     userid INTEGER NOT NULL,
     productid INTEGER NOT NULL,
     quantity INTEGER NOT NULL DEFAULT 1,
-    price_at_purchase DECIMAL NOT NULL,
+    price_at_purchase INTEGER NOT NULL, -- stored in cents
     created_at DATETIME NOT NULL DEFAULT CURRENT_DATE,
     address VARCHAR NOT NULL,
     notes VARCHAR,
     FOREIGN KEY (userid) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY(productid) REFERENCES products(id) ON DELETE CASCADE
+    FOREIGN KEY (productid) REFERENCES products(id) ON DELETE CASCADE
 )
 ;

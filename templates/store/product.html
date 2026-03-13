@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block header %}
+{% endblock %}
+
+{% block main_content %}
+    <h1>{{ product.name }}</h1>
+    <p>{{ product.price_cents/100 }}</p>
+    <p>{{ product.description }}</p>
+    <img src="{{ url_for('static', filename='images/products/'~product.image) }}" alt="An image of {{ product.name }}" />
+
+    <a href="{{ url_for('add_to_cart', p_id=product.id) }}">Add to cart</a>
+{% endblock %}

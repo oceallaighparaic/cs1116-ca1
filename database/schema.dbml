@@ -22,7 +22,7 @@ ref: users.permission < permissions.id
 Table products {
   id integer [pk, increment]
   name varchar [not null, unique]
-  price decimal [not null]
+  price_cents integer [not null] // STORED IN CENTS
   image varchar [default: null]
   description varchar
 }
@@ -32,7 +32,7 @@ Table orders {
   userid integer [not null]
   productid integer [not null]
   quantity integer [not null, default: 1]
-  price_at_purchase decimal [not null]
+  price_at_purchase integer [not null] // STORED IN CENTS
   created_at datetime [not null, default: 'CURRENT_DATE']
   address varchar [not null]
   notes varchar

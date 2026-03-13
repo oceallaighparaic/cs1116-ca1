@@ -3,3 +3,6 @@ __pycache__
 flask_session
 
 database/app.db
+static/images/products/*
+
+.DS_Store

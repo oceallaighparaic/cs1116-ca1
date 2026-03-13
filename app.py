@@ -1,22 +1,35 @@
+#region IMPORTS
+# general flask
 from flask import Flask, render_template
 
+# sessions
 from flask_session import Session
 from flask import session, g
 
+# authentication
 from flask import redirect, url_for, request, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 
+# file uploads (https://flask-wtf.readthedocs.io/en/1.2.x/form/?highlight=filefield)
+import os
+from werkzeug.utils import secure_filename
+import uuid
+
+# homegrown organic grassfed modules
 import database.database as database
 import helpers
 import forms
 
+# my pedantic typehinting
 from typing import Final
+#endregion
 
 #region CONFIG
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "secret_key"
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
+app.config["UPLOAD_FOLDER"] = "static/images/products/"
 app.teardown_appcontext(database.close_db)
 Session(app)
 #endregion
@@ -43,7 +56,7 @@ def load_auth() -> None:
 # https://flask.palletsprojects.com/en/stable/errorhandling/
 @app.errorhandler(403)
 def forbidden(error):
-    return render_template("error.html", error=error), 403
+    return render_template("generic/error.html", error=error), 403
 
 @app.route("/login", methods=["GET","POST"], strict_slashes=False)
 @helpers.logout_required
@@ -71,7 +84,7 @@ def login_page() -> str:
             session["user_id"] = query["id"]
             session["username"] = query["username"]
 
-            return redirect(url_for(request.args.get("next","home_page")))
+            return redirect(request.args.get("next") or url_for("home_page"))
 
     return render_template(
         "auth/login.html",
@@ -111,5 +124,119 @@ def register_page() -> str:
         "auth/register.html",
         title="Sign Up",
         form=form
+    )
+#endregion
+
+#region STORE
+@app.route("/store", methods=["GET","POST"], strict_slashes=False)
+def search_page() -> str:
+    search_term: Final[str] = request.args.get("search",None)
+    if not search_term: return redirect(url_for('home_page'))
+
+    db = database.get_db()
+    query = db.execute("SELECT * FROM products WHERE name LIKE ?", (f"%{search_term}%",)).fetchall()
+
+    return render_template(
+        "store/search.html",
+        title=f"Search For {search_term}",
+        search=search_term,
+        products=query
+    )
+
+@app.route("/add-product", methods=["GET","POST"], strict_slashes=False)
+@helpers.admin_only
+def add_product_page() -> str:
+    form = forms.AddProductForm()
+    message = ""
+
+    if form.validate_on_submit():
+        db = database.get_db()
+
+        name: Final[str] = form.name.data
+        price: Final[float] = form.price.data
+        image = form.image.data
+        description: Final[str] = form.description.data
+        
+        # !-- errors
+        if db.execute("SELECT id FROM products WHERE LOWER(name) = ?", (name.lower(),)).fetchone():
+            form.name.errors += ["Name already taken."]
+
+        # !-- add product
+        if not form.name.errors:
+            # https://flask-wtf.readthedocs.io/en/1.2.x/form/?highlight=filefield
+            filename: Final[str] = secure_filename(f"{uuid.uuid4()}.{image.filename.split('.')[-1]}")
+            image.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+
+            db.execute("INSERT INTO products(name, price_cents, image, description) VALUES (?,?,?,?)", (name,int(price*100),filename,description))
+            db.commit()
+            
+            message = f"{name} added successfully."
+
+    return render_template(
+        "store/addproduct.html",
+        title="Add Products",
+        form=form,
+        message=message
+    )
+
+@app.errorhandler(404)
+def not_found(error) -> str:
+    return render_template("generic/error.html", error=error), 404
+
+@app.route("/product/<int:p_id>", methods=["GET","POST"], strict_slashes=False)
+def product_page(p_id: int) -> str:
+    db = database.get_db()
+    product = db.execute("SELECT * FROM products WHERE id = ? ;", (p_id,)).fetchone()
+
+    # !-- errors
+    if not product:
+        abort(404)
+
+    # !-- product page
+    return render_template(
+        "store/product.html",
+        title=product["name"],
+        product=product
+    )
+
+@app.route("/add-to-cart/<int:p_id>", methods=["GET","POST"], strict_slashes=False)
+@helpers.login_required
+def add_to_cart(p_id: int) -> str:
+    # !-- initialize cart
+    if "cart" not in session:
+        session["cart"] = {}
+
+    # !-- guard against invalid ids
+    db = database.get_db()
+    if not db.execute("SELECT id FROM products WHERE id = ? ;",(p_id,)).fetchone():
+        abort(403)
+
+    # !-- add to cart
+    if not p_id in session["cart"]:
+        session["cart"][p_id] = 0
+    session["cart"][p_id] += 1
+
+    return redirect(url_for('cart_page'))
+    
+@app.route("/cart/", methods=["GET","POST"], strict_slashes=False)
+@helpers.login_required
+def cart_page() -> str:
+    # !-- intialize cart
+    if "cart" not in session:
+        session["cart"] = {}
+    
+    # !-- fetch names
+    names: dict[int:str] = {}
+    db = database.get_db()
+    for p_id,_ in session["cart"].items():
+        p = db.execute("SELECT name FROM products WHERE id = ? ;",(p_id,)).fetchone()
+        names[p_id] = p["name"]
+        print(names)
+
+    return render_template(
+        "store/cart.html",
+        title="My Cart",
+        cart=session["cart"],
+        names=names
     )
 #endregion

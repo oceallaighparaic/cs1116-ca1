@@ -9,7 +9,18 @@
     <title>{{ title }}</title>
 </head>
 <body>
-    {% block main_content %}
-    {% endblock %}
+    <header>
+        <nav>
+            <!-- Searchbar -->
+            <form action="/store" method="GET">
+                <input type="text" id="search" name="search" value="{{ search }}" />
+                <input type="submit" value="Search" />
+            </form>
+        </nav>
+    </header>
+    <main>
+        {% block main_content %}
+        {% endblock %}
+    </main>
 </body>
 </html>

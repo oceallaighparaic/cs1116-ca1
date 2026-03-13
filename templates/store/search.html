@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block header %}
+{% endblock %}
+
+{% block main_content %}
+<section id="productlist">
+    {% for p in products %}
+        <article class="product">
+            <a href="{{ url_for('product_page', p_id=p.id) }}">
+                <h1>{{ p.name }}</h1>
+                <p>&#8364;{{ p.price_cents/100 }}</p>
+                <img src="{{ url_for('static', filename='images/products/'~p.image) }}" alt="An image showing {{ p.name }}." />
+            </a>
+        </article>
+    {% endfor %}
+</section>
+{% endblock %}
