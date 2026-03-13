@@ -26,4 +26,5 @@ class AddressForm(FlaskForm):
     street = StringField("Street:", validators=[InputRequired()])
     city = StringField("City:", validators=[InputRequired()])
     eircode = StringField("Eircode:", validators=[InputRequired()])
+    note = TextAreaField("Notes:")
     submit = SubmitField("Place Order")

@@ -24,12 +24,22 @@ main {
         justify-content: center;
         align-items: center;
     }
+    & figure {
+        display: flex;
+        flex-flow: column nowrap;
+        align-items: center;
+
+        max-width: 50vw;
+    }
     & img {
         width: 20em;
         height: 20em;
     }
     & figcaption {
         text-align: center;
+        overflow-wrap: break-word;
+        width: 100%;
+        max-width: 20em;
     }
     & a {
         background-color: var(--color-accent);

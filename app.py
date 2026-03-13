@@ -295,6 +295,7 @@ def place_order() -> str:
         city: str = form.city.data.strip(',')
         eircode: str = form.eircode.data
         address: str = f"{street}, {city}, {eircode}"
+        note = form.note.data
 
         for p_id, quantity in session["cart"].items():
             # fetch price
@@ -304,10 +305,10 @@ def place_order() -> str:
             
             # create order
             db.execute("""
-                INSERT INTO orders(userid, productid, quantity, price_at_purchase, address) 
-                VALUES (?,?,?,?,?)
+                INSERT INTO orders(userid, productid, quantity, price_at_purchase, address, notes) 
+                VALUES (?,?,?,?,?,?)
                 ;""",
-                (g.user_id, p_id, quantity, int(query["price_cents"]), address))
+                (g.user_id, p_id, quantity, int(query["price_cents"]), address, note))
             db.commit()
 
         session["cart"] = {} # flush cart
