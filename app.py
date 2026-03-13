@@ -282,9 +282,9 @@ def place_order() -> str:
     prices: list[int] = []
     db = database.get_db()
     for p_id,_ in session["cart"].items():
-        p = db.execute("SELECT name, price_cents FROM products WHERE id = ? ;",(p_id,)).fetchone()
+        p = db.execute("SELECT id, name, price_cents FROM products WHERE id = ? ;",(p_id,)).fetchone()
         names[p_id] = p["name"]
-        prices += [p["price_cents"]]
+        prices += [int(p["price_cents"])*session["cart"][int(p["id"])]]
 
     total_price: int = sum(prices)
 
