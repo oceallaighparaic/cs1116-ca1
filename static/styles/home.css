@@ -7,7 +7,7 @@
     position: relative;
 
     min-height: 20vh;
-    background-image: url('/static/images/intro_bckg.jpg');
+    background-image: url('../images/intro_bckg.jpg');
     background-repeat: no-repeat;
     background-position: 0;
     backdrop-filter: blur(5px);
