@@ -1,3 +1,159 @@
 :root {
-    background-color: lightgray;
+    --color-background: #FAF7F5;
+    --color-card: #F5E6F7;
+    --color-secondary: #C9A8CB;
+    --color-accent: #EE7AF9;
+    --color-primary: #3D2040;
+    --color-button: #F1DAF4;
+    --color-hover: #F29EFB;
+
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+html {
+    background-color: var(--color-background);
+}
+
+nav {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: flex-start;
+
+    background-color: rgba(245, 230, 247, 0.8); /* var(--color-card) except rgba for transparency */
+    border-radius: 0 0 5px 5px;
+    backdrop-filter: blur(5px);
+    z-index: 100;
+
+    position: sticky;
+    top: 0;
+
+    & a, form input[type="submit"] {
+        text-decoration: none;
+        position: relative;
+
+        color: var(--color-background);
+        background-color: var(--color-accent);
+        border: none;
+        z-index: 0;
+
+        font-size: 1em;
+
+        padding: 0.8em 0.6em;
+
+        &:hover {
+            color: var(--color-background);
+
+            cursor: pointer;
+        }
+
+        &::before {
+            content: "";
+            position: absolute;
+
+            bottom: 0;
+            left: 0;
+            z-index: -1;
+
+            background-color: var(--color-hover);
+            width: 100%;
+            height: 0%;
+
+            transition: height 0.25s;
+        }
+
+        &:hover::before {
+            height: 100%;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+
+            bottom: 0;
+            left: 0;
+            z-index: 0;
+
+            background-color: var(--color-background);
+            width: 0%;
+            height: 2px;
+
+            transition: width 0.25s;
+        }
+
+        &:hover::after {
+            width: 100%;
+        }
+    }
+
+    & form {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        justify-content: center;
+
+        padding: 0em 0.5em;
+    }
+
+    & form input[type="submit"] {
+        align-self: center;
+
+        color: var(--color-primary);
+    
+        background-image: url("/static/images/search.png");
+        background-size: 1em;
+        background-color: var(--color-accent);
+        background-repeat: no-repeat;
+        background-position: center;
+        border-radius: 0 0.5em 0.5em 0;
+
+        height: 1.5em;
+        width: 1.5em;
+    }
+
+    & form input[type="text"] {
+        border: none;
+
+        background-color: var(--color-background);
+        border-radius: 5px 0 0 5px;
+
+        font-size: 1em;
+        padding: 0.1em;
+
+        color: var(--color-primary);
+    }
+
+    & form+a {
+        margin-left: auto;
+    }
+}
+
+main {
+    min-height: 100vh;
+}
+
+body {
+    display: grid;
+    grid-column: 1fr;
+    grid-row: auto 1fr auto;
+    grid-template-areas:
+        "top"
+        "mid"
+        "bot"
+    ;
+
+    & nav {
+        grid-area: top;
+    }
+    & main {
+        grid-area: mid;
+    }
+    & footer {
+        grid-area: bot;
+    }
 }

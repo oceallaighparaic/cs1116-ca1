@@ -39,9 +39,12 @@ Session(app)
 
 @app.route("/", methods=["GET","POST"])
 def home_page() -> str:
+    db = database.get_db()
+    query = db.execute("SELECT * FROM products LIMIT 10 ;")
     return render_template(
         "generic/home.html", 
-        title="Home"
+        title="Home",
+        products=query
     )
 
 #region AUTHENTICATION
@@ -84,6 +87,9 @@ def login_page() -> str:
             session["user_id"] = query["id"]
             session["username"] = query["username"]
 
+            # set admin
+            if db.execute("SELECT users.id FROM users JOIN permissions ON users.permission = permissions.id WHERE LOWER(permissions.name) = 'admin' AND users.id = ? ;",(session["user_id"],)).fetchone():
+                session["is_admin"] = True
             return redirect(request.args.get("next") or url_for("home_page"))
 
     return render_template(
@@ -96,6 +102,7 @@ def login_page() -> str:
 @app.route("/logout", methods=["GET","POST"], strict_slashes=False)
 def logout_page() -> str:
     session.clear()
+    g.admin = False
     return redirect(url_for(request.args.get("next","home_page")))
 
 @app.route("/register", methods=["GET","POST"], strict_slashes=False)
@@ -134,7 +141,7 @@ def search_page() -> str:
     if not search_term: return redirect(url_for('home_page'))
 
     db = database.get_db()
-    query = db.execute("SELECT * FROM products WHERE name LIKE ?", (f"%{search_term}%",)).fetchall()
+    query = db.execute("SELECT * FROM products WHERE name LIKE ?",(f"%{search_term}%",)).fetchall()
 
     return render_template(
         "store/search.html",

@@ -9,18 +9,31 @@
     <title>{{ title }}</title>
 </head>
 <body>
-    <header>
-        <nav>
-            <!-- Searchbar -->
-            <form action="/store" method="GET">
-                <input type="text" id="search" name="search" value="{{ search }}" />
-                <input type="submit" value="Search" />
-            </form>
-        </nav>
-    </header>
+    <nav>
+        <a href="{{ url_for('home_page') }}">Home</a>
+        <!-- Searchbar -->
+        <form action="/store" method="GET">
+            <input type="text" id="search" name="search" value="{{ search }}" />
+            <input type="submit" value="" />
+        </form>
+        {% if g.user %}
+            <a href="{{ url_for('orders_page') }}">{{ g.user }}</a>
+            {% if session["is_admin"] %}
+                <a href="{{ url_for('add_product_page') }}">Manage Products</a>
+            {% endif %}
+            <a href="{{ url_for('cart_page') }}">Cart</a>
+            <a href="{{ url_for('logout_page') }}">Log Out</a>
+        {% else %}
+            <a href="{{ url_for('login_page') }}">Log In</a>
+            <a href="{{ url_for('register_page') }}">Sign Up</a>
+        {% endif %}
+    </nav>
     <main>
         {% block main_content %}
         {% endblock %}
     </main>
+    <footer>
+        <p>test</p>
+    </footer>
 </body>
 </html>
