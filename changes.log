@@ -49,3 +49,8 @@ v2.2.0:
     - Added product pages under the "/product/<id>" route
     - Fixed bug with authentication helpers.admin_only, now requires login (it didn't before???)
     - Changed filenames to uuids
+
+v2.3.0:
+    - Added cart.html
+    - Added "/cart/" route
+    - Added "/add-to-cart/<id>" route

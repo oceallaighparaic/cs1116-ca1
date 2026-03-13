@@ -1,4 +1,3 @@
-- Cart
 - Orders
 - Reviews, only on ordered products
 - Ratings
@@ -14,3 +13,4 @@ DONE:
 - Product images
 - Searchbar
 - Product pages
+- Cart

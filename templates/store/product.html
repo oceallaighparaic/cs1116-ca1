@@ -9,5 +9,5 @@
     <p>{{ product.description }}</p>
     <img src="{{ url_for('static', filename='images/products/'~product.image) }}" alt="An image of {{ product.name }}" />
 
-    <button>Purchase</button>
+    <a href="{{ url_for('add_to_cart', p_id=product.id) }}">Add to cart</a>
 {% endblock %}

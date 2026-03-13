@@ -180,13 +180,13 @@ def add_product_page() -> str:
     )
 
 @app.errorhandler(404)
-def not_found(error):
+def not_found(error) -> str:
     return render_template("generic/error.html", error=error), 404
 
-@app.route("/product/<int:id>", methods=["GET","POST"], strict_slashes=False)
-def product_page(id: int) -> str:
+@app.route("/product/<int:p_id>", methods=["GET","POST"], strict_slashes=False)
+def product_page(p_id: int) -> str:
     db = database.get_db()
-    product = db.execute("SELECT * FROM products WHERE id = ? ;", (id,)).fetchone()
+    product = db.execute("SELECT * FROM products WHERE id = ? ;", (p_id,)).fetchone()
 
     # !-- errors
     if not product:
@@ -197,5 +197,46 @@ def product_page(id: int) -> str:
         "store/product.html",
         title=product["name"],
         product=product
+    )
+
+@app.route("/add-to-cart/<int:p_id>", methods=["GET","POST"], strict_slashes=False)
+@helpers.login_required
+def add_to_cart(p_id: int) -> str:
+    # !-- initialize cart
+    if "cart" not in session:
+        session["cart"] = {}
+
+    # !-- guard against invalid ids
+    db = database.get_db()
+    if not db.execute("SELECT id FROM products WHERE id = ? ;",(p_id,)).fetchone():
+        abort(403)
+
+    # !-- add to cart
+    if not p_id in session["cart"]:
+        session["cart"][p_id] = 0
+    session["cart"][p_id] += 1
+
+    return redirect(url_for('cart_page'))
+    
+@app.route("/cart/", methods=["GET","POST"], strict_slashes=False)
+@helpers.login_required
+def cart_page() -> str:
+    # !-- intialize cart
+    if "cart" not in session:
+        session["cart"] = {}
+    
+    # !-- fetch names
+    names: dict[int:str] = {}
+    db = database.get_db()
+    for p_id,_ in session["cart"].items():
+        p = db.execute("SELECT name FROM products WHERE id = ? ;",(p_id,)).fetchone()
+        names[p_id] = p["name"]
+        print(names)
+
+    return render_template(
+        "store/cart.html",
+        title="My Cart",
+        cart=session["cart"],
+        names=names
     )
 #endregion
