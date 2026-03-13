@@ -1,0 +1,12 @@
+main {
+    & h1 {
+        color: var(--color-primary);
+        text-align: center;
+    }
+    & section {
+        margin: 0 auto;
+        width: auto;
+        display: flex;
+        justify-content: center;
+    }
+}

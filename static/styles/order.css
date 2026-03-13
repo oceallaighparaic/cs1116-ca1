@@ -1,0 +1,15 @@
+main {
+    & h1 {
+        color: var(--color-primary);
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    & section {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+
+        margin-top: 20px;
+    }
+}

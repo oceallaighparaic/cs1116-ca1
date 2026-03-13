@@ -2,27 +2,31 @@
 {% from "macros.html" import create_field %}
 
 {% block header %}
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/addproduct.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/form.css') }}" />
 {% endblock %}
 
 {% block main_content %}
-<form action="" method="POST" enctype="multipart/form-data" novalidate>
-    {{ form.hidden_tag() }}
+<h1>
+    Add Product:
+</h1>
+<section>
+    <form action="" method="POST" enctype="multipart/form-data" novalidate class="inp">
+        {{ form.hidden_tag() }}
 
-    {{ create_field(form.name) }}
-    <br />
-    
-    {{ create_field(form.price) }}
-    <br />
+        {{ create_field(form.name) }}
+        <br />
+        
+        {{ create_field(form.price) }}
+        <br />
 
-    {{ create_field(form.image) }}
-    <br />
+        {{ create_field(form.image) }}
+        <br />
 
-    {{ create_field(form.description) }}
-    <br />
+        {{ create_field(form.description) }}
+        <br />
 
-    {{ form.submit() }}
-</form>
-<p>
-    {{ message }}
-</p>
+        {{ form.submit() }}
+    </form>
+</section>
 {% endblock %}

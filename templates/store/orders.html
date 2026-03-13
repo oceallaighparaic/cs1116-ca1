@@ -2,6 +2,7 @@
 
 {% block header %}
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/orders.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/table.css') }}" />
 {% endblock %}
 
 {% block main_content %}
@@ -32,7 +33,7 @@
                         {% endif %}
                     {% endfor %}
                     <td>
-                        <a href="{{ url_for('cancel_order', o_id=order.orderid) }}">Cancel</a>
+                        <a href="{{ url_for('cancel_order', o_id=order.orderid) }}" class="cancel">Cancel</a>
                     </td>
                 </tr>
             {% endfor %}
