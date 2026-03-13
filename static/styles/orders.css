@@ -1,0 +1,99 @@
+section {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: flex-start;
+
+    margin-top: 10px;
+    
+    & table {
+        color: var(--color-primary);
+
+        background-color: var(--color-card);
+        border-radius: 10px;
+
+        & th {
+            color: var(--color-secondary);
+            font-weight: lighter;
+        }
+        
+        & tr>* {
+            padding: 0.3em 0.6em;
+            text-align: center;
+        }
+
+        & a {
+            text-decoration: none;
+
+            background-color: var(--color-button);
+            border: 2px solid var(--color-secondary);
+            padding: 0.2em 0.5em;
+            border-radius: 0.8em;
+            color: var(--color-secondary);
+
+            box-shadow: 0 0 0 white;
+            transition: box-shadow 0.25s, color 0.25s;
+
+            &:hover {
+                box-shadow: 3px 3px 5px lightgray;
+                color: var(--color-primary);
+            }
+        }
+    }
+
+    &>p {
+        display: flex;
+        justify-content: center;
+    }
+
+    &>a {
+        margin-left: 1em;
+        text-decoration: none;
+
+        color: var(--color-primary);
+
+        position: relative;
+
+        &::before {
+            content: "";
+            position: absolute;
+
+            bottom: 0;
+            left: 0;
+            z-index: -1;
+
+            background-color: var(--color-accent);
+            width: 0%;
+            height: 2px;
+
+            transition: width 0.25s;
+        }
+
+        &:hover::before {
+            width: 100%;
+        }
+    }
+}
+
+main {
+    align-self: start;
+
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+        "title"
+        "content"
+    ;
+
+    &>h1 {
+        grid-area: title;
+
+        display: flex;
+        justify-content: center;
+
+        color: var(--color-primary);
+    }
+    & section {
+        grid-area: content;
+    }
+}

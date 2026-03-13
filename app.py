@@ -238,7 +238,6 @@ def cart_page() -> str:
     for p_id,_ in session["cart"].items():
         p = db.execute("SELECT name FROM products WHERE id = ? ;",(p_id,)).fetchone()
         names[p_id] = p["name"]
-        print(names)
 
     return render_template(
         "store/cart.html",
@@ -262,7 +261,6 @@ def place_order() -> str:
     for p_id,_ in session["cart"].items():
         p = db.execute("SELECT name FROM products WHERE id = ? ;",(p_id,)).fetchone()
         names[p_id] = p["name"]
-        print(names)
 
     # !-- place order
     form = forms.AddressForm()

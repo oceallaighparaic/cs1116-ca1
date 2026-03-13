@@ -70,3 +70,7 @@ v4.0.0:
     - Updated styles.css for the navbar and main tags! (finally!!!)
     - Added home.css
     - Created a macro for the storepage
+
+v4.1.0:
+    - Added orders.css
+    

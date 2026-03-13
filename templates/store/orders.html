@@ -1,37 +1,47 @@
 {% extends "base.html" %}
 
 {% block header %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/orders.css') }}" />
 {% endblock %}
 
 {% block main_content %}
-    {% if query %}
-    <table>
-        <tr>
-            <th scope="col">order id</th>
-            <th scope="col">user id</th>
-            <th scope="col">product id</th>
-            <th scope="col">quantity</th>
-            <th scope="col">price per</th>
-            <th scope="col">created at</th>
-            <th scope="col">address</th>
-            <th scope="col">notes</th>
-        </tr>
-        {% for order in query %}
+    <h1>Orders:</h1>
+    <section>
+        {% if query %}
+        <table>
             <tr>
-                {% for property in order %}
-                    <td>
-                        {{ property }}
-                    </td>
-                {% endfor %}
-                <td>
-                    <a href="{{ url_for('cancel_order', o_id=order.orderid) }}">Cancel Order</a>
-                </td>
+                <th scope="col">ID</th>
+                <th scope="col">Product</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price (per)</th>
+                <th scope="col">Placed On</th>
+                <th scope="col">Address</th>
+                <th scope="col">Notes</th>
             </tr>
-        {% endfor %}
-    </table>
-    {% else %}
-    <p>
-        You have no orders!
-    </p>
-    {% endif %}
+            {% for order in query %}
+                <tr>
+                    {% for property in order %}
+                        {% if not loop.index == 2 %}
+                            <td>
+                                {% if loop.index == 5 %}
+                                    &euro;{{ property/100 }}
+                                {% else %}
+                                    {{ property }}
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                    {% endfor %}
+                    <td>
+                        <a href="{{ url_for('cancel_order', o_id=order.orderid) }}">Cancel</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p>
+            You have no orders!
+        </p>
+        <a href="{{ url_for('home_page') }}">Go Home</a>
+        {% endif %}
+    </section>
 {% endblock %}
