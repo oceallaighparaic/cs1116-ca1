@@ -65,3 +65,13 @@ v3.1.0:
     - Added "/orders/" route
     - Added orders.html
     - Added "/cancel-order/<id>" route
+
+v4.0.0:
+    - Updated styles.css for the navbar and main tags! (finally!!!)
+    - Added home.css
+    - Created a macro for the storepage
+
+v4.1.0:
+    - Added orders.css
+    - All css
+    - Added "/remove_product/<p_id>"

@@ -1,10 +1,15 @@
 {% extends "base.html" %}
+{% from "macros.html" import create_store %}
 
 {% block header %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/home.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/store.css') }}" />
 {% endblock %}
 
 {% block main_content %}
-    <p>
-        Home.
-    </p>
+    <section id="intro">
+        <h1>InThread Sales</h1>
+        <p>The answer to all of your embroidery needs.</p>
+    </section>
+    {{ create_store(products) }}
 {% endblock %}

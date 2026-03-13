@@ -2,29 +2,47 @@
 {% from "macros.html" import create_field %}
 
 {% block header %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/order.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static' , filename='styles/table.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/form.css') }}" />
 {% endblock %}
 
 {% block main_content %}
-    <table>
-        {% for p_id, quantity in session.cart.items() %}
+    <h1>Place Order:</h1>
+    <section>
+        <table>
             <tr>
-                <td>{{ names[p_id] }}</td>
-                <td>{{ quantity }}</td>
+                <th scope="col">Product</th>
+                <th scope="col">Quantity</th>
             </tr>
-        {% endfor %}
-    </table>
-    <form action="" method="POST" novalidate>
-        {{ form.hidden_tag() }}
+            {% for p_id, quantity in session.cart.items() %}
+                <tr>
+                    <td><a href="{{ url_for('product_page', p_id=p_id) }}">{{ names[p_id] }}</a></td>
+                    <td>{{ quantity }}</td>
+                    <td><a href="{{ url_for('remove_from_cart', p_id=p_id) }}" class="cancel">Remove</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </section>
+    <section>
+        <form action="" method="POST" novalidate class="inp">
+            {{ form.hidden_tag() }}
 
-        {{ create_field(form.street) }}
-        <br />
+            {{ create_field(form.street) }}
+            <br />
 
-        {{ create_field(form.city) }}
-        <br />
+            {{ create_field(form.city) }}
+            <br />
 
-        {{ create_field(form.eircode) }}
-        <br />
+            {{ create_field(form.eircode) }}
+            <br />
 
-        {{ form.submit() }}
-    </form>
+            {{ form.submit() }}
+        </form>
+    </section>
+    <section>
+        <p>
+            Total Price: &euro;{{ price/100 }}
+        </p>
+    </section>
 {% endblock %}

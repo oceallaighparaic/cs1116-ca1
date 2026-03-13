@@ -1,0 +1,35 @@
+form.inp {
+    color: var(--color-primary);
+    font-weight: lighter;
+
+    & input[type="text"], input[type="number"], input[type="password"], textarea {
+        border: none;
+        background-color: var(--color-secondary);
+        color: var(--color-primary);
+        border-radius: 5px;
+
+        padding: 0.2em;
+    }
+
+    & input[type="submit"] {
+        text-decoration: none;
+        
+        border: none;
+        background-color: var(--color-accent);
+        color: var(--color-card);
+        border-radius: 5px;
+        padding: 0.5em 1em;
+        font-size: 1em;
+        cursor: pointer;
+
+        margin: 0.2em auto;
+
+        box-shadow: 0 0 0 white;
+        transition: box-shadow 0.25s, background-color 0.25s;
+
+        &:hover {
+            background-color: var(--color-hover);
+            box-shadow: 5px 5px 5px lightgray;
+        }
+    }
+}

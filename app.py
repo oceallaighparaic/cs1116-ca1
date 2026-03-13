@@ -39,9 +39,12 @@ Session(app)
 
 @app.route("/", methods=["GET","POST"])
 def home_page() -> str:
+    db = database.get_db()
+    query = db.execute("SELECT * FROM products LIMIT 10 ;")
     return render_template(
         "generic/home.html", 
-        title="Home"
+        title="Home",
+        products=query
     )
 
 #region AUTHENTICATION
@@ -84,6 +87,9 @@ def login_page() -> str:
             session["user_id"] = query["id"]
             session["username"] = query["username"]
 
+            # set admin
+            if db.execute("SELECT users.id FROM users JOIN permissions ON users.permission = permissions.id WHERE LOWER(permissions.name) = 'admin' AND users.id = ? ;",(session["user_id"],)).fetchone():
+                session["is_admin"] = True
             return redirect(request.args.get("next") or url_for("home_page"))
 
     return render_template(
@@ -96,6 +102,7 @@ def login_page() -> str:
 @app.route("/logout", methods=["GET","POST"], strict_slashes=False)
 def logout_page() -> str:
     session.clear()
+    g.admin = False
     return redirect(url_for(request.args.get("next","home_page")))
 
 @app.route("/register", methods=["GET","POST"], strict_slashes=False)
@@ -134,7 +141,7 @@ def search_page() -> str:
     if not search_term: return redirect(url_for('home_page'))
 
     db = database.get_db()
-    query = db.execute("SELECT * FROM products WHERE name LIKE ?", (f"%{search_term}%",)).fetchall()
+    query = db.execute("SELECT * FROM products WHERE name LIKE ?",(f"%{search_term}%",)).fetchall()
 
     return render_template(
         "store/search.html",
@@ -147,7 +154,6 @@ def search_page() -> str:
 @helpers.admin_only
 def add_product_page() -> str:
     form = forms.AddProductForm()
-    message = ""
 
     if form.validate_on_submit():
         db = database.get_db()
@@ -170,13 +176,12 @@ def add_product_page() -> str:
             db.execute("INSERT INTO products(name, price_cents, image, description) VALUES (?,?,?,?)", (name,int(price*100),filename,description))
             db.commit()
             
-            message = f"{name} added successfully."
+            return redirect(url_for('home_page'))
 
     return render_template(
         "store/addproduct.html",
         title="Add Products",
-        form=form,
-        message=message
+        form=form
     )
 
 @app.errorhandler(404)
@@ -231,7 +236,6 @@ def cart_page() -> str:
     for p_id,_ in session["cart"].items():
         p = db.execute("SELECT name FROM products WHERE id = ? ;",(p_id,)).fetchone()
         names[p_id] = p["name"]
-        print(names)
 
     return render_template(
         "store/cart.html",
@@ -239,6 +243,30 @@ def cart_page() -> str:
         cart=session["cart"],
         names=names
     )
+
+@app.route("/remove-cart/<int:p_id>", methods=["GET","POST"], strict_slashes=False)
+@helpers.login_required
+def remove_from_cart(p_id: int) -> str:
+    if p_id not in session["cart"]:
+        return redirect(url_for('cart_page'))
+    
+    session["cart"][p_id] -= 1
+    if session["cart"][p_id] <= 0:
+        session["cart"].pop(p_id)
+    return redirect(url_for('cart_page'))
+
+@app.route("/remove-product/<int:p_id>", methods=["GET","POST"], strict_slashes=False)
+@helpers.admin_only
+def remove_product(p_id: int) -> str:
+    db = database.get_db()
+
+    if not db.execute("SELECT * FROM products WHERE id = ?", (p_id,)).fetchone():
+        return redirect(url_for('home_page'))
+    
+    db.execute("DELETE FROM products WHERE id = ?", (p_id,))
+    db.commit()
+
+    return redirect(url_for('home_page'))
 #endregion
 
 #region ORDERS
@@ -249,13 +277,16 @@ def place_order() -> str:
     if "cart" not in session:
         return redirect(url_for('home_page'))
     
-    # !-- fetch names
+    # !-- fetch names, prices
     names: dict[int:str] = {} # id:name
+    prices: list[int] = []
     db = database.get_db()
     for p_id,_ in session["cart"].items():
-        p = db.execute("SELECT name FROM products WHERE id = ? ;",(p_id,)).fetchone()
+        p = db.execute("SELECT name, price_cents FROM products WHERE id = ? ;",(p_id,)).fetchone()
         names[p_id] = p["name"]
-        print(names)
+        prices += [p["price_cents"]]
+
+    total_price: int = sum(prices)
 
     # !-- place order
     form = forms.AddressForm()
@@ -280,13 +311,14 @@ def place_order() -> str:
             db.commit()
 
         session["cart"] = {} # flush cart
-        return redirect(url_for('cart_page'))  
+        return redirect(url_for('orders_page'))  
 
     return render_template(
         "store/order.html",
         title="Finalize Order",
         form=form,
-        names=names
+        names=names,
+        price=total_price
     )
 
 @app.route("/orders", methods=["GET","POST"], strict_slashes=False)

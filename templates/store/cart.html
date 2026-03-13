@@ -1,22 +1,37 @@
 {% extends "base.html" %}
 
 {% block header %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/cart.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/table.css') }}" />
 {% endblock %}
 
 {% block main_content %}
-    {% if cart %}
+    <h1>Cart:</h1>
+    <section>
+        {% if cart %}
         <table>
+            <tr>
+                <th scope="col">Product</th>
+                <th scope="col">Quantity</th>
+            </tr>
             {% for p_id, quantity in cart.items() %}
                 <tr>
                     <td><a href="{{ url_for('product_page', p_id=p_id) }}">{{ names[p_id] }}</a></td>
                     <td>{{ quantity }}</td>
+                    <td><a href="{{ url_for('remove_from_cart', p_id=p_id) }}" class="cancel">Remove</a></td>
                 </tr>
             {% endfor %}
         </table>
-        <a href="{{ url_for('place_order') }}">Place Order</a>
-    {% else %}
-        <p>
-            Your cart is empty!
-        </p>
+        {% else %}
+            <p>
+                Your cart is empty!
+            </p>
+            <a href="{{ url_for('home_page') }}">Go Home</a>
+        {% endif %}
+    </section>
+    {% if cart %}
+        <section>
+            <a href="{{ url_for('place_order') }}">Place Order</a>
+        </section>
     {% endif %}
 {% endblock %}

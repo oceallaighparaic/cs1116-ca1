@@ -11,3 +11,20 @@
         {{ e }}
     {% endfor %}
 {% endmacro %}
+
+{% macro create_store(products) %}
+    <section id="store">
+        <h1>In Store:</h1>
+        {% for p in products %}
+            <a href="{{ url_for('product_page', p_id=p.id) }}">
+                <figure>
+                    <figcaption>
+                        <h2>{{ p.name }}</h2>
+                        <p>&euro;{{ p.price_cents/100 }}</p>
+                    </figcaption>
+                    <img src="{{ url_for('static', filename='images/products/'~p.image) }}" alt="An image of the product {{ p.name }}" />
+                </figure>
+            </a>
+        {% endfor %}
+    </section>
+{% endmacro %}
