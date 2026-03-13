@@ -54,3 +54,9 @@ v2.3.0:
     - Added cart.html
     - Added "/cart/" route
     - Added "/add-to-cart/<id>" route
+
+v3.0.0:
+    - Updated README.md to include instructions on how to setup the project
+    - Added "/place-order/" route with a link to it in cart.html
+    - Added order.html
+    - Added AddressForm in forms.py
