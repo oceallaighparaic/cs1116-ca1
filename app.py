@@ -288,4 +288,34 @@ def place_order() -> str:
         form=form,
         names=names
     )
+
+@app.route("/orders", methods=["GET","POST"], strict_slashes=False)
+@helpers.login_required
+def orders_page() -> str:
+    db = database.get_db()
+    query = db.execute("SELECT * FROM orders WHERE userid = ? ;",(g.user_id,)).fetchall()
+
+    return render_template(
+        "store/orders.html",
+        title="Orders",
+        query=query
+    )
+
+@app.route("/cancel-order/<int:o_id>", methods=["GET","POST"], strict_slashes=False)
+@helpers.login_required
+def cancel_order(o_id: int) -> str:
+    db = database.get_db()
+    
+    # !-- guard
+    order = db.execute("SELECT * FROM orders WHERE orderid = ? ;",(o_id,)).fetchone()
+    if not order: # order doesnt exist
+        return redirect(url_for('home_page'))
+    if not order["userid"] == g.user_id: # user doesn't own order
+        return redirect(url_for('orders_page'))
+
+    # !-- cancel order
+    db.execute("DELETE FROM orders WHERE orderid = ? ;",(o_id,))
+    db.commit()
+
+    return redirect(url_for('orders_page'))
 #endregion

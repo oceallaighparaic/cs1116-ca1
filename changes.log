@@ -60,3 +60,8 @@ v3.0.0:
     - Added "/place-order/" route with a link to it in cart.html
     - Added order.html
     - Added AddressForm in forms.py
+
+v3.1.0:
+    - Added "/orders/" route
+    - Added orders.html
+    - Added "/cancel-order/<id>" route
