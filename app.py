@@ -240,3 +240,82 @@ def cart_page() -> str:
         names=names
     )
 #endregion
+
+#region ORDERS
+@app.route("/place-order", methods=["GET","POST"], strict_slashes=False)
+@helpers.login_required
+def place_order() -> str:
+    # !-- guard
+    if "cart" not in session:
+        return redirect(url_for('home_page'))
+    
+    # !-- fetch names
+    names: dict[int:str] = {} # id:name
+    db = database.get_db()
+    for p_id,_ in session["cart"].items():
+        p = db.execute("SELECT name FROM products WHERE id = ? ;",(p_id,)).fetchone()
+        names[p_id] = p["name"]
+        print(names)
+
+    # !-- place order
+    form = forms.AddressForm()
+    if form.validate_on_submit():
+        street: str = form.street.data.strip(',')
+        city: str = form.city.data.strip(',')
+        eircode: str = form.eircode.data
+        address: str = f"{street}, {city}, {eircode}"
+
+        for p_id, quantity in session["cart"].items():
+            # fetch price
+            query: str = db.execute("SELECT price_cents FROM products WHERE id = ? ;", (p_id,)).fetchone()
+            if not query: # guard for if somehow there is an incorrect id in the cart
+                continue
+            
+            # create order
+            db.execute("""
+                INSERT INTO orders(userid, productid, quantity, price_at_purchase, address) 
+                VALUES (?,?,?,?,?)
+                ;""",
+                (g.user_id, p_id, quantity, int(query["price_cents"]), address))
+            db.commit()
+
+        session["cart"] = {} # flush cart
+        return redirect(url_for('cart_page'))  
+
+    return render_template(
+        "store/order.html",
+        title="Finalize Order",
+        form=form,
+        names=names
+    )
+
+@app.route("/orders", methods=["GET","POST"], strict_slashes=False)
+@helpers.login_required
+def orders_page() -> str:
+    db = database.get_db()
+    query = db.execute("SELECT * FROM orders WHERE userid = ? ;",(g.user_id,)).fetchall()
+
+    return render_template(
+        "store/orders.html",
+        title="Orders",
+        query=query
+    )
+
+@app.route("/cancel-order/<int:o_id>", methods=["GET","POST"], strict_slashes=False)
+@helpers.login_required
+def cancel_order(o_id: int) -> str:
+    db = database.get_db()
+    
+    # !-- guard
+    order = db.execute("SELECT * FROM orders WHERE orderid = ? ;",(o_id,)).fetchone()
+    if not order: # order doesnt exist
+        return redirect(url_for('home_page'))
+    if not order["userid"] == g.user_id: # user doesn't own order
+        return redirect(url_for('orders_page'))
+
+    # !-- cancel order
+    db.execute("DELETE FROM orders WHERE orderid = ? ;",(o_id,))
+    db.commit()
+
+    return redirect(url_for('orders_page'))
+#endregion

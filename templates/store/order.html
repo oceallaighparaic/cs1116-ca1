@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "macros.html" import create_field %}
+
+{% block header %}
+{% endblock %}
+
+{% block main_content %}
+    <table>
+        {% for p_id, quantity in session.cart.items() %}
+            <tr>
+                <td>{{ names[p_id] }}</td>
+                <td>{{ quantity }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <form action="" method="POST" novalidate>
+        {{ form.hidden_tag() }}
+
+        {{ create_field(form.street) }}
+        <br />
+
+        {{ create_field(form.city) }}
+        <br />
+
+        {{ create_field(form.eircode) }}
+        <br />
+
+        {{ form.submit() }}
+    </form>
+{% endblock %}

@@ -21,3 +21,9 @@ class AddProductForm(FlaskForm):
     image = FileField("Upload Image:", validators=[FileRequired(), FileAllowed(["jpg","jpeg","png","webp"])])
     description = TextAreaField("Description:", description="Product description...")
     submit = SubmitField("Add Product")
+
+class AddressForm(FlaskForm):
+    street = StringField("Street:", validators=[InputRequired()])
+    city = StringField("City:", validators=[InputRequired()])
+    eircode = StringField("Eircode:", validators=[InputRequired()])
+    submit = SubmitField("Place Order")
